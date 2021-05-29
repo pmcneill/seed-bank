@@ -1,0 +1,65 @@
+datasource db {
+  provider = "postgresql"
+  url = "postgres://larry@192.168.0.8:5432/seed_bank"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model user {
+  id        Int       @default(autoincrement()) @id
+  name      String
+
+  password  String
+  salt      String
+
+  playthroughs    playthrough[]
+
+  created_at      DateTime    @db.Timestamptz @default(now())
+  updated_at      DateTime    @db.Timestamptz @updatedAt
+}
+
+model game {
+  id        Int       @default(autoincrement()) @id
+  name      String
+
+  seeds     seed[]
+
+  created_at      DateTime    @db.Timestamptz @default(now())
+  updated_at      DateTime    @db.Timestamptz @updatedAt
+}
+
+model seed {
+  id        Int       @default(autoincrement()) @id
+  flags     String
+  seed      String
+
+  game      game      @relation(fields: [game_id], references: [id])
+  game_id   Int
+
+  playthroughs    playthrough[]
+
+  created_at      DateTime    @db.Timestamptz @default(now())
+  updated_at      DateTime    @db.Timestamptz @updatedAt
+}
+
+model playthrough {
+  id        Int       @default(autoincrement()) @id
+
+  user      user      @relation(fields: [user_id], references: [id])
+  user_id   Int
+
+  seed      seed      @relation(fields: [seed_id], references: [id])
+  seed_id   Int
+
+  time_ms   Int
+
+  comment       String?
+  url       String?
+  rating_fun    Int?
+  rating_hard   Int?
+
+  created_at      DateTime    @db.Timestamptz @default(now())
+  updated_at      DateTime    @db.Timestamptz @updatedAt
+}
