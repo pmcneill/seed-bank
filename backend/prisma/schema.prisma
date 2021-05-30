@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url = "postgres://larry@192.168.0.8:5432/seed_bank"
+  url = env("db_url")
 }
 
 generator client {
@@ -8,11 +8,12 @@ generator client {
 }
 
 model user {
-  id        Int       @default(autoincrement()) @id
-  name      String
+  @@map(name: "users")
+  id              Int         @default(autoincrement()) @id
+  name            String
 
-  password  String
-  salt      String
+  twitch_id       String      @unique
+  profile_image   String
 
   playthroughs    playthrough[]
 
@@ -24,6 +25,20 @@ model game {
   id        Int       @default(autoincrement()) @id
   name      String
 
+  flags     flags[]
+
+  created_at      DateTime    @db.Timestamptz @default(now())
+  updated_at      DateTime    @db.Timestamptz @updatedAt
+}
+
+model flags {
+  id        Int       @default(autoincrement()) @id
+  name      String?
+  value     String
+
+  game      game      @relation(fields: [game_id], references: [id])
+  game_id   Int
+
   seeds     seed[]
 
   created_at      DateTime    @db.Timestamptz @default(now())
@@ -32,11 +47,10 @@ model game {
 
 model seed {
   id        Int       @default(autoincrement()) @id
-  flags     String
   seed      String
 
-  game      game      @relation(fields: [game_id], references: [id])
-  game_id   Int
+  flags     flags     @relation(fields: [flags_id], references: [id])
+  flags_id  Int
 
   playthroughs    playthrough[]
 
@@ -55,10 +69,10 @@ model playthrough {
 
   time_ms   Int
 
-  comment       String?
-  url       String?
-  rating_fun    Int?
-  rating_hard   Int?
+  comment         String?
+  url             String?
+  rating_fun      Int?
+  rating_hard     Int?
 
   created_at      DateTime    @db.Timestamptz @default(now())
   updated_at      DateTime    @db.Timestamptz @updatedAt
