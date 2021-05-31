@@ -113,19 +113,19 @@ app.get('/login/authorize',
   }
 );
 
-app.get('/games', async (_req, res) => {
+app.get('/api/games', async (_req, res) => {
   const games = await prisma.game.findMany()
 
   res.jsonp(games)
 })
 
-app.get('/games/:game_id/flags', async (req, res) => {
+app.get('/api/games/:game_id/flags', async (req, res) => {
   const flags = await prisma.flags.findMany({ where: { game_id: parseInt(req.params.game_id) } })
 
   res.jsonp(flags)
 })
 
-app.post('/games/:game_id/flags',
+app.post('/api/games/:game_id/flags',
   require_login,
   async (req, res) => {
     const flags = await prisma.flags.create({
@@ -140,13 +140,13 @@ app.post('/games/:game_id/flags',
   }
 )
 
-app.get('/flags/:flag_id/seeds', async (req, res) => {
+app.get('/api/flags/:flag_id/seeds', async (req, res) => {
   const seeds = await prisma.seed.findMany({ where: { flags_id: parseInt(req.params.flag_id) } })
 
   res.jsonp(seeds)
 })
 
-app.post('/flags/:flag_id/seeds', 
+app.post('/api/flags/:flag_id/seeds',
   require_login,
   async (req, res) => {
     const seed = await prisma.seed.create({
@@ -160,7 +160,7 @@ app.post('/flags/:flag_id/seeds',
   }
 )
 
-app.get('/seeds/:id', async (req, res) => {
+app.get('/api/seeds/:id', async (req, res) => {
   const seed = await prisma.seed.findUnique({
     where: { id: parseInt(req.params.id) },
     include: { playthroughs: { include: { user: true } } }
@@ -169,7 +169,7 @@ app.get('/seeds/:id', async (req, res) => {
   res.jsonp(seed)
 })
 
-app.post('/seeds/:seed_id/playthrough',
+app.post('/api/seeds/:seed_id/playthrough',
   require_login,
   async (req, res) => {
     const play = await prisma.playthrough.create({
