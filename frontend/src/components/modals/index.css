@@ -1,0 +1,32 @@
+.modal-bg {
+  position: fixed;
+  z-index: 10;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal div {
+  margin: 15px 0;
+}
+
+.modal {
+  position: relative;
+  z-index: 20;
+  margin: auto;
+  top: 25vh;
+  width: 40vw;
+  border: 2px solid black;
+  background-color: white;
+  padding: 1em;
+}
+
+.modal-bg.hidden {
+  display: none;
+}
+
+.modal .closeButton {
+  float: right;
+}

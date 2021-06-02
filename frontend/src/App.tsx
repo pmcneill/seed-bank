@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 
 import { FlagList } from './components/FlagList'
+import { SeedList } from './components/SeedList'
 
 import {
   useState
@@ -13,12 +14,17 @@ function App() {
 
   return (
     <div className="main">
-      <header className="header">
-        <p>{game.name}, Flags {flag?.value}</p>
-      </header>
-      <nav>
-        <FlagList game_id={game.id} on_flag_change={(f: Flag) => set_flag(f)}/>
-      </nav>
+      <div className="header">
+        <h2>{game.name}</h2>
+      </div>
+
+      <FlagList game_id={game.id} on_flag_change={(f: Flag) => set_flag(f)}/>
+
+      <div className="seeds">
+        <h3>Seeds</h3>
+
+        {flag && <SeedList flag_id={flag.id} />}
+      </div>
     </div>
   );
 }
