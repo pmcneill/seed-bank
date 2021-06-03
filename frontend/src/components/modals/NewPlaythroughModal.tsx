@@ -1,6 +1,8 @@
 import {
-  useState
+  useState,
 } from 'react'
+
+import { useUser } from '../WithUser'
 
 import { Modal } from './index'
 
@@ -12,11 +14,11 @@ import { to_ms, from_ms } from '../../util/time'
 interface NewSeedModalProps {
   flag_id: number,
   seed_id?: number,
-  onSave: (pt: Playthrough, seed: Seed) => void,
+  onSave: (pt: TPlaythrough, seed: TSeed) => void,
   onCancel: () => void,
 }
 
-async function create_seed(flag_id: number, seed: string, hash: string ) : Promise<Seed> {
+async function create_seed(flag_id: number, seed: string, hash: string ) : Promise<TSeed> {
   const resp = await fetch(`/api/flags/${flag_id}/seeds`, {
     method: 'POST',
     headers: { "Content-type": "application/json" },
@@ -26,17 +28,17 @@ async function create_seed(flag_id: number, seed: string, hash: string ) : Promi
   return resp.json()
 }
 
-async function fetch_seed(seed_id: number) : Promise<Seed> {
+async function fetch_seed(seed_id: number) : Promise<TSeed> {
   const resp = await fetch(`/api/seeds/${seed_id}`)
   return resp.json()
 }
 
-async function create_playthrough(flag_id: number, pt: NewPlaythrough, seed_id?: number) : Promise<{ playthrough: Playthrough, seed: Seed}> {
+async function create_playthrough(flag_id: number, pt: TNewPlaythrough, seed_id?: number) : Promise<{ playthrough: TPlaythrough, seed: TSeed}> {
 
   console.log("creating playthrough for ", flag_id, " with ", pt, " and seed ", seed_id)
 
   if ( ! seed_id ) {
-    let seed : Seed = await create_seed(flag_id, pt.seed, pt.hash)
+    let seed : TSeed = await create_seed(flag_id, pt.seed, pt.hash)
     console.log(seed)
     seed_id = seed.id
   }
@@ -54,18 +56,24 @@ async function create_playthrough(flag_id: number, pt: NewPlaythrough, seed_id?:
     }),
   })
 
-  let playthrough = await resp.json() as Playthrough
+  let playthrough = await resp.json() as TPlaythrough
 
   // Reload the seed to get the new averages
   return { playthrough, seed: await fetch_seed(seed_id) }
 }
 
 export const NewPlaythroughModal : React.FC<NewSeedModalProps> = ( { onSave, flag_id, seed_id, onCancel } ) => {
-  const [ pt, update_pt] = useState<NewPlaythrough>({
+  const user = useUser()
+
+  if ( ! user ) {
+    throw new Error("Not logged in")
+  }
+
+  const [ pt, update_pt] = useState<TNewPlaythrough>({
     seed: seed_id ? 'given' : '',
     hash: seed_id ? 'given' : '',
     seed_description: '',
-    user_id: 1,
+    user_id: user.id,
     time_ms: 0,
     comment: '',
     rating_fun: 0,
@@ -74,7 +82,7 @@ export const NewPlaythroughModal : React.FC<NewSeedModalProps> = ( { onSave, fla
 
   const [ time, _set_time ] = useState<string>(from_ms(pt.time_ms))
 
-  const update_field = (field: keyof NewPlaythrough, value: string | number) => {
+  const update_field = (field: keyof TNewPlaythrough, value: string | number) => {
     update_pt((prior) => ({ ...prior, [field]: value }))
   }
 

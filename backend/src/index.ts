@@ -51,10 +51,6 @@ async function find_or_import_user(tu: TwitchUser) {
 }
 
 function require_login(req: express.Request, res: express.Response, next: express.NextFunction) {
-  req.user = { id: 1 }
-  next()
-  return
-
   if ( ! req.user ) {
     res.json(false)
   } else {
@@ -112,10 +108,15 @@ app.get('/login', passport.authenticate('oauth2'));
 
 app.get('/login/authorize',
   passport.authenticate('oauth2', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.json(req.user)
+  function(_req, res) {
+    res.redirect('/')
   }
 );
+
+app.get('/api/me',
+  require_login,
+  async(req, res) => res.jsonp(req.user)
+)
 
 app.get('/api/games', async (_req, res) => {
   const games = await prisma.game.findMany()
@@ -145,7 +146,10 @@ app.post('/api/games/:game_id/flags',
 )
 
 app.get('/api/flags/:flag_id/seeds', async (req, res) => {
-  const seeds = await prisma.seed.findMany({ where: { flag_id: parseInt(req.params.flag_id) } })
+  const seeds = await prisma.seed.findMany({
+    where: { flag_id: parseInt(req.params.flag_id) },
+    include: { playthroughs: { include: { user: true } } },
+  })
 
   res.jsonp(seeds)
 })

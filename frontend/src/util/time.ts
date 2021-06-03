@@ -29,7 +29,8 @@ export function from_ms(time: number) {
 
   let parts : Array<string> = []
 
-  time = time / 1000
+  time = Math.floor(time / 1000)
+  let ms : string | number = Math.floor((time % 1000) / 100)
 
   parts[0] = "" + Math.floor(time / 3600)
   time = time % 3600
@@ -43,12 +44,10 @@ export function from_ms(time: number) {
   }
   time = time % 60
 
-  let secs = Math.floor(time)
-
-  if ( secs < 10 ) {
-    parts[2] = "0" + time
+  if ( time < 10 ) {
+    parts[2] = `0${time}.${ms}`
   } else {
-    parts[2] = "" + time
+    parts[2] = `${time}.${ms}`
   }
 
   return parts.join(':')

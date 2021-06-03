@@ -6,14 +6,14 @@ import { Modal } from './index'
 
 interface NewFlagModalProps {
   game_id: number,
-  onSave: (flag: Flag) => void,
+  onSave: (flag: TFlag) => void,
   onCancel: () => void,
 }
 
 export const NewFlagModal : React.FC<NewFlagModalProps> = ( { onSave, game_id, ...props } ) => {
-  const [ new_flag, update_flag ] = useState<NewFlag>({ name: '', value: '', game_id: 1 })
+  const [ new_flag, update_flag ] = useState<TNewFlag>({ name: '', value: '', game_id: 1 })
 
-  const update_field = (field: keyof NewFlag, value: string) => {
+  const update_field = (field: keyof TNewFlag, value: string) => {
     update_flag((prior) => ({ ...prior, [field]: value }))
   }
 
@@ -32,7 +32,7 @@ export const NewFlagModal : React.FC<NewFlagModalProps> = ( { onSave, game_id, .
 
     console.log(resp)
 
-    let flag = await resp.json() as Flag
+    let flag = await resp.json() as TFlag
 
     onSave(flag)
   }

@@ -4,24 +4,26 @@ import {
 } from 'react'
 
 import { NewFlagModal } from './modals/NewFlagModal'
+import { useUser } from './WithUser'
 
 interface Props {
   game_id: number;
-  on_flag_change: (f: Flag) => void;
+  on_flag_change: (f: TFlag) => void;
 }
 
 export const FlagList : React.FC<Props> = (props) => {
-  let [ flags, set_flags ] = useState<Array<Flag>>([]);
+  let [ flags, set_flags ] = useState<Array<TFlag>>([]);
   let [ show_modal, set_show_modal ] = useState<boolean>(false);
+  const user = useUser()
 
   useEffect(() => {
     fetch(`/api/games/${props.game_id}/flags`)
       .then((resp) => resp.json())
-      .then((flags: Flag[]) => set_flags(flags))
+      .then((flags: TFlag[]) => set_flags(flags))
   }, [ props.game_id ])
 
 
-  const add_flag = (flag: Flag) => {
+  const add_flag = (flag: TFlag) => {
     console.log("adding a flag", flag)
     set_flags((all_flags) => all_flags.concat(flag))
     set_show_modal(false)
@@ -37,11 +39,13 @@ export const FlagList : React.FC<Props> = (props) => {
         ))}
       </ul>
 
-      <div>
-        <a onClick={() => set_show_modal(true)}>Add a new flag</a>
-      </div>
+      {user && <>
+        <div>
+          <a onClick={() => set_show_modal(true)}>Add a new flag</a>
+        </div>
 
-      {show_modal && <NewFlagModal onSave={add_flag} onCancel={() => set_show_modal(false)} game_id={props.game_id} />}
+        {show_modal && <NewFlagModal onSave={add_flag} onCancel={() => set_show_modal(false)} game_id={props.game_id} />}
+      </>}
     </div>
   )
 }

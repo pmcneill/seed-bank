@@ -12,6 +12,10 @@ div.header {
   grid-row-end: 2;
 }
 
+div.login {
+  float: right;
+}
+
 div.flags {
   grid-column-start: 1;
   grid-column-end: 2;
@@ -46,4 +50,15 @@ h3 {
   font-size: 1.25em;
   font-weight: bold;
   margin-top: 0;
+}
+
+div.playthrough {
+  margin-left: 10px;
+  margin-top: 0.5em;
+  margin-bottom: 0.75em;
+  border-top: 1px dashed black;
+}
+
+div.playthrough:nth-child(2) {
+  border-top: none;
 }

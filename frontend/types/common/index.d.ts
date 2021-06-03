@@ -1,30 +1,35 @@
-interface Game {
+interface TGame {
   id: number;
   name: string;
 }
 
-interface NewFlag {
+interface TNewFlag {
   name: string;
   value: string;
   game_id: number;
 }
 
-interface Flag extends NewFlag {
+interface TFlag extends TNewFlag {
   id: number;
 }
 
-interface NewSeed {
+interface TNewSeed {
   seed: string;
   hash: string;
   flag_id: number;
 }
 
-interface Seed extends NewSeed {
+interface TSeed extends TNewSeed {
   id: number;
-  playthroughs: [Playthrough];
+  playthroughs: [TPlaythrough];
 }
 
-interface NewPlaythrough {
+interface TUser {
+  id: number;
+  name: string;
+}
+
+interface TNewPlaythrough {
   seed: string;
   seed_description: string;
   user_id: number;
@@ -35,10 +40,11 @@ interface NewPlaythrough {
   rating_hard: number;
 }
 
-interface Playthrough {
+interface TPlaythrough {
   id: number;
   seed_id: number;
   user_id: number;
+  user: TUser;
   time_ms: number;
   comment: string;
   rating_fun: number;
