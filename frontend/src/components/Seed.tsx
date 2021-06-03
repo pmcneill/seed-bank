@@ -12,6 +12,7 @@ import './Seed.css'
 
 interface SeedProps {
   seed : TSeed;
+  playthroughs: TPlaythrough[];
 }
 
 interface ToggleProps {
@@ -37,12 +38,12 @@ const TogglePlaythrough : React.FC<ToggleProps> = function({ value, onChange}) {
   }
 }
 
-export const Seed : React.FC<SeedProps> = function({ seed }) {
+export const Seed : React.FC<SeedProps> = function({ seed, playthroughs }) {
   let fun = 0, hard = 0, time = 0
 
   let [ show_modal, set_show_modal ] = useState<boolean>(false)
   let [ show_pts, set_show_pts ] = useState<boolean>(false)
-  let [ pts, set_pts ] = useState<Array<TPlaythrough>>(seed.playthroughs)
+  let [ pts, set_pts ] = useState<Array<TPlaythrough>>(playthroughs)
 
   const { user } = useUser()
 

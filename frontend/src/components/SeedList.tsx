@@ -17,6 +17,7 @@ export const SeedList : React.FC<Props> = ({ flag }) => {
   const { user } = useUser()
 
   useEffect(() => {
+    console.log("refetching flags!")
     fetch(`/api/flags/${flag.id}/seeds`)
       .then((resp) => resp.json())
       .then((s: TSeed[]) => set_seeds(s))
@@ -36,7 +37,7 @@ export const SeedList : React.FC<Props> = ({ flag }) => {
       Flags <input type="text" size={40} readOnly={true} value={flag.value} />
 
       <ul>
-        {seeds.map((s) => ( <li><Seed seed={s} /></li> ))}
+        {seeds.map((s) => ( <li><Seed seed={s} playthroughs={s.playthroughs}/></li> ))}
       </ul>
 
       {user && <>
