@@ -27,6 +27,7 @@ interface TSeed extends TNewSeed {
 interface TUser {
   id: number;
   name: string;
+  hide_ratings: boolean;
 }
 
 interface TNewPlaythrough {

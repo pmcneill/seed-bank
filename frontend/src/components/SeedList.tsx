@@ -14,7 +14,7 @@ interface Props {
 export const SeedList : React.FC<Props> = ({ flag }) => {
   let [ seeds, set_seeds ] = useState<TSeed[]>([])
   let [ show_modal, set_show_modal ] = useState<boolean>(false);
-  const user = useUser()
+  const { user } = useUser()
 
   useEffect(() => {
     fetch(`/api/flags/${flag.id}/seeds`)

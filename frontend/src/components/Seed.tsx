@@ -14,6 +14,29 @@ interface SeedProps {
   seed : TSeed;
 }
 
+interface ToggleProps {
+  value: boolean;
+  onChange: (val: boolean) => void;
+}
+
+const TogglePlaythrough : React.FC<ToggleProps> = function({ value, onChange}) {
+  const { user } = useUser()
+
+  if ( ! user ) {
+    return <>
+      {value && <a onClick={() => onChange(false)}>Hide playthroughs</a>}
+      {!value && <a onClick={() => onChange(true)}>Show playthroughs</a>}
+    </>
+  } else {
+    return <>
+      {!user.hide_ratings && <>
+        {value && <a onClick={() => onChange(false)}>Hide playthroughs</a>}
+        {!value && <a onClick={() => onChange(true)}>Show playthroughs</a>}
+      </>}
+    </>
+  }
+}
+
 export const Seed : React.FC<SeedProps> = function({ seed }) {
   let fun = 0, hard = 0, time = 0
 
@@ -21,7 +44,7 @@ export const Seed : React.FC<SeedProps> = function({ seed }) {
   let [ show_pts, set_show_pts ] = useState<boolean>(false)
   let [ pts, set_pts ] = useState<Array<TPlaythrough>>(seed.playthroughs)
 
-  const user = useUser()
+  const { user } = useUser()
 
   if ( pts?.length ) {
     for ( let pt of pts ) {
@@ -52,23 +75,21 @@ export const Seed : React.FC<SeedProps> = function({ seed }) {
       {!show_pts && <div className="playthrough">
         <div className="counts spoiler">
           Plays: {pts?.length || 0}
-          &nbsp;
-          Avg. Time: {from_ms(time)}
+          {user && !user.hide_ratings && <>&nbsp; Avg. Time: {from_ms(time)}</>}
         </div>
-        <div className="ratings spoiler">
+        {user && !user.hide_ratings && <div className="ratings spoiler">
           Fun: <StarRatingComponent name="avg_fun" value={fun} starCount={5} editing={false} />
           &nbsp;
           Difficulty: <StarRatingComponent name="avg_hard" value={hard} starCount={5} editing={false} />
-        </div>
+        </div>}
       </div>}
 
       {show_pts && pts.map((pt) => <Playthrough playthrough={pt}/>)}
 
       <div className="add_pt">
-        {show_pts && <a onClick={() => set_show_pts(false)}>Hide playthroughs</a>}
-        {!show_pts && <a onClick={() => set_show_pts(true)}>Show playthroughs</a>}
+        <TogglePlaythrough value={show_pts} onChange={set_show_pts} />
         {user && <>
-          &nbsp;|&nbsp;
+          {!user.hide_ratings && <>&nbsp;|&nbsp;</>}
           <a onClick={() => set_show_modal(true)}>Add playthrough of this seed</a>
           {show_modal && <NewPlaythroughModal onSave={add_playthrough} onCancel={() => set_show_modal(false)} flag_id={seed.flag_id} seed_id={seed.id} />}
         </>}

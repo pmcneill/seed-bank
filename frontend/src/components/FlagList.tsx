@@ -14,7 +14,7 @@ interface Props {
 export const FlagList : React.FC<Props> = (props) => {
   let [ flags, set_flags ] = useState<Array<TFlag>>([]);
   let [ show_modal, set_show_modal ] = useState<boolean>(false);
-  const user = useUser()
+  const { user } = useUser()
 
   useEffect(() => {
     fetch(`/api/games/${props.game_id}/flags`)

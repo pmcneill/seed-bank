@@ -63,7 +63,7 @@ async function create_playthrough(flag_id: number, pt: TNewPlaythrough, seed_id?
 }
 
 export const NewPlaythroughModal : React.FC<NewSeedModalProps> = ( { onSave, flag_id, seed_id, onCancel } ) => {
-  const user = useUser()
+  const { user } = useUser()
 
   if ( ! user ) {
     throw new Error("Not logged in")

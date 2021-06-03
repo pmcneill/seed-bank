@@ -27,7 +27,7 @@ type TwitchUser = {
   id: string,
   login: string,
   display_name: string,
-  profile_image_url: string
+  profile_image_url: string,
 }
 
 async function find_or_import_user(tu: TwitchUser) {
@@ -117,6 +117,22 @@ app.get('/api/me',
   require_login,
   async(req, res) => res.jsonp(req.user)
 )
+
+app.put('/api/me/prefs', async(req, res) => {
+  if ( ! req.user ) {
+    res.jsonp(true)
+    return;
+  }
+
+  await prisma.user.update({
+    where: { id: (req.user as any).id },
+    data: {
+      hide_ratings: req.body.hide_ratings || false
+    }
+  })
+
+  res.jsonp(true)
+})
 
 app.get('/api/games', async (_req, res) => {
   const games = await prisma.game.findMany()
