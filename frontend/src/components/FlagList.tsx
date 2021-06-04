@@ -4,7 +4,7 @@ import {
 } from 'react'
 
 import { NewFlagModal } from './modals/NewFlagModal'
-import { useUser } from './WithUser'
+import { useSession } from './WithSession'
 
 interface Props {
   game_id: number;
@@ -14,7 +14,7 @@ interface Props {
 export const FlagList : React.FC<Props> = (props) => {
   let [ flags, set_flags ] = useState<Array<TFlag>>([]);
   let [ show_modal, set_show_modal ] = useState<boolean>(false);
-  const { user } = useUser()
+  const { user } = useSession()
 
   useEffect(() => {
     fetch(`/api/games/${props.game_id}/flags`)
@@ -35,7 +35,7 @@ export const FlagList : React.FC<Props> = (props) => {
 
       <ul>
         {flags.map((f) => (
-          <li><a onClick={() => props.on_flag_change(f)}>{f.name}</a></li>
+          <li key={f.id}><a onClick={() => props.on_flag_change(f)}>{f.name}</a></li>
         ))}
       </ul>
 

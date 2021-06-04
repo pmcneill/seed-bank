@@ -1,13 +1,13 @@
 import StarRatingComponent from 'react-star-rating-component'
 import { from_ms } from '../util/time'
-import { useUser } from './WithUser'
+import { useSession } from './WithSession'
 
 interface Props {
   playthrough: TPlaythrough;
 }
 
 export const Playthrough : React.FC<Props> = function({ playthrough }) {
-  const { user } = useUser()
+  const { user } = useSession()
 
   return (
     <div className="playthrough">

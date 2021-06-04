@@ -2,7 +2,7 @@ import {
   useState,
 } from 'react'
 
-import { useUser } from '../WithUser'
+import { useSession } from '../WithSession'
 
 import { Modal } from './index'
 
@@ -35,6 +35,7 @@ async function fetch_seed(seed_id: number) : Promise<TSeed> {
 
 async function create_playthrough(flag_id: number, pt: TNewPlaythrough, seed_id?: number) : Promise<{ playthrough: TPlaythrough, seed: TSeed}> {
 
+
   console.log("creating playthrough for ", flag_id, " with ", pt, " and seed ", seed_id)
 
   if ( ! seed_id ) {
@@ -48,7 +49,7 @@ async function create_playthrough(flag_id: number, pt: TNewPlaythrough, seed_id?
     headers: { "Content-type": "application/json" },
     body: JSON.stringify({
       seed_id,
-      user_id: 1,
+      user_id: pt.user_id,
       time_ms: pt.time_ms,
       comment: pt.comment,
       rating_fun: pt.rating_fun,
@@ -63,7 +64,7 @@ async function create_playthrough(flag_id: number, pt: TNewPlaythrough, seed_id?
 }
 
 export const NewPlaythroughModal : React.FC<NewSeedModalProps> = ( { onSave, flag_id, seed_id, onCancel } ) => {
-  const { user } = useUser()
+  const { user } = useSession()
 
   if ( ! user ) {
     throw new Error("Not logged in")

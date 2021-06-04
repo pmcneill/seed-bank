@@ -127,7 +127,7 @@ app.put('/api/me/prefs', async(req, res) => {
   await prisma.user.update({
     where: { id: (req.user as any).id },
     data: {
-      hide_ratings: req.body.hide_ratings || false
+      spoilers: req.body.spoilers || false
     }
   })
 
@@ -165,9 +165,23 @@ app.get('/api/flags/:flag_id/seeds', async (req, res) => {
   const seeds = await prisma.seed.findMany({
     where: { flag_id: parseInt(req.params.flag_id) },
     include: { playthroughs: { include: { user: true } } },
+    orderBy: { hash: "desc" }
   })
 
-  res.jsonp(seeds)
+  if ( ! req.user ) {
+    res.jsonp(seeds)
+    return
+  }
+
+  let result : any = seeds.map((s) => {
+    //: Array<typeof seeds & { completed: boolean }>
+    return {
+      ...s,
+      completed: s.playthroughs.findIndex((p) => p.user_id === (req.user as any)?.id) >= 0,
+    }
+  })
+
+  res.jsonp(result)
 })
 
 app.post('/api/flags/:flag_id/seeds',
@@ -191,7 +205,17 @@ app.get('/api/seeds/:id', async (req, res) => {
     include: { playthroughs: { include: { user: true } } }
   })
 
-  res.jsonp(seed)
+  if ( ! seed ) {
+    res.jsonp(false)
+    return
+  }
+
+  let result : typeof seed & { completed: boolean } = {
+    ...seed,
+    completed: seed.playthroughs.findIndex((p) => p.user_id === (req.user as any)?.id) >= 0
+  }
+
+  res.jsonp(result)
 })
 
 app.post('/api/seeds/:seed_id/playthrough',

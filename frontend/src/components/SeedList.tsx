@@ -3,7 +3,7 @@ import {
   useState,
 } from 'react'
 
-import { useUser } from './WithUser'
+import { useSession } from './WithSession'
 import { NewPlaythroughModal } from './modals/NewPlaythroughModal'
 import { Seed } from './Seed'
 
@@ -14,7 +14,7 @@ interface Props {
 export const SeedList : React.FC<Props> = ({ flag }) => {
   let [ seeds, set_seeds ] = useState<TSeed[]>([])
   let [ show_modal, set_show_modal ] = useState<boolean>(false);
-  const { user } = useUser()
+  const { user } = useSession()
 
   useEffect(() => {
     console.log("refetching flags!")
@@ -25,9 +25,23 @@ export const SeedList : React.FC<Props> = ({ flag }) => {
 
 
   const add_playthrough = (pt: TPlaythrough, seed: TSeed) => {
-    if ( seeds.findIndex((s) => s.id === seed.id) === -1 ) {
-      set_seeds((seeds) => seeds.concat(seed))
-    }
+    set_seeds((seeds) => {
+      let found = false
+      for ( let i = 0 ; i < seeds.length ; i++ ) {
+        if ( seeds[i].id === seed.id ) {
+          seeds[i] = seed
+          found = true
+          break
+        }
+      }
+
+      if ( ! found ) {
+        seeds.push(seed)
+      }
+
+      return seeds
+    })
+
     set_show_modal(false)
   }
 
@@ -49,7 +63,7 @@ export const SeedList : React.FC<Props> = ({ flag }) => {
       Flags <input type="text" size={40} readOnly={true} value={flag.value} />
 
       <ul>
-        {seeds.map((s) => ( <li><Seed seed={s} update_seed={update_seed}/></li> ))}
+        {seeds.map((s) => ( <li><Seed key={s.id} seed={s} update_seed={update_seed}/></li> ))}
       </ul>
 
       {user && <>

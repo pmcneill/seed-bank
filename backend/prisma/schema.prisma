@@ -15,7 +15,7 @@ model user {
   twitch_id       String      @unique
   profile_image   String
 
-  hide_ratings    Boolean     @default(true)
+  spoilers        Boolean     @default(false)
 
   playthroughs    playthrough[]
 

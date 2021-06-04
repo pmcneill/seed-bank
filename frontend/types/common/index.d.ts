@@ -22,12 +22,13 @@ interface TNewSeed {
 interface TSeed extends TNewSeed {
   id: number;
   playthroughs: [TPlaythrough];
+  completed: boolean;
 }
 
 interface TUser {
   id: number;
   name: string;
-  hide_ratings: boolean;
+  spoilers: boolean;
 }
 
 interface TNewPlaythrough {

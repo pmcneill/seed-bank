@@ -6,31 +6,39 @@ import {
   useMemo,
 } from 'react'
 
-interface TUserContext {
+interface TSessionContext {
   user: TUser | false,
   set_user: (u: TUser | false) => void,
+  spoilers: boolean,
+  set_spoilers: (v: boolean) => void,
 }
 
-const UserContext = createContext<TUserContext>({ user: false, set_user: (u) => null})
+const SessionContext = createContext<TSessionContext>({
+  user: false,
+  set_user: (_u) => null,
+  spoilers: false,
+  set_spoilers: (_v) => null,
+})
 
-export function useUser() {
-  return useContext<TUserContext>(UserContext)
+export function useSession() {
+  return useContext<TSessionContext>(SessionContext)
 }
 
 export const User: React.FC = function() {
-  const { user, set_user } = useUser()
+  const { user, set_user, spoilers, set_spoilers } = useSession()
 
   const toggle_ratings = () => {
     if ( ! user ) return;
 
-    user.hide_ratings = !user.hide_ratings
+    set_spoilers(!spoilers)
+    user.spoilers = !spoilers
     set_user(user)
   }
 
   if ( user ) {
     return <div className="login logged-in">
       <strong>{user.name}</strong><br />
-      <a onClick={toggle_ratings}>{user.hide_ratings ? "Show" : "Hide"} potential spoilers</a>
+      <a onClick={toggle_ratings}>{spoilers ? "Show" : "Hide"} potential spoilers</a>
     </div>
   } else {
     return <div className="login">
@@ -39,8 +47,9 @@ export const User: React.FC = function() {
   }
 }
 
-export const WithUser : React.FC = function({ children }) {
+export const WithSession : React.FC = function({ children }) {
   const [ user, _set_user ] = useState<TUser | false>(false)
+  const [ spoilers, set_spoilers ] = useState<boolean>(false)
 
   const set_user = function(u: TUser | false) {
     // Don't care about the results of this...
@@ -62,12 +71,13 @@ export const WithUser : React.FC = function({ children }) {
       .then((resp) => resp.json())
       .then((result) => {
         set_user(result)
+        set_spoilers(result.spoilers)
       })
   }, [ user_id ])
 
-  const value = useMemo(() => ({user, set_user}), [user])
+  const value = useMemo(() => ({user, set_user, spoilers, set_spoilers}), [user, spoilers])
 
-  return <UserContext.Provider value={value}>
+  return <SessionContext.Provider value={value}>
     {children}
-  </UserContext.Provider>
+  </SessionContext.Provider>
 }

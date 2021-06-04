@@ -4,7 +4,7 @@ import './App.css'
 import { FlagList } from './components/FlagList'
 import { SeedList } from './components/SeedList'
 
-import { User, WithUser } from './components/WithUser'
+import { User, WithSession } from './components/WithSession'
 
 import {
   useState,
@@ -14,7 +14,7 @@ function App() {
   let [ game, _set_game ] = useState<TGame>({ id: 1, name: 'Zelda II: The Adventure of Link' })
   let [ flag, set_flag ] = useState<TFlag | null>(null)
 
-  return (<WithUser>
+  return (<WithSession>
     <div className="main">
       <div className="header">
         <div className="login">
@@ -28,7 +28,7 @@ function App() {
 
       {flag && <SeedList flag={flag} />}
     </div>
-  </WithUser>);
+  </WithSession>);
 }
 
 export default App;
