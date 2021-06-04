@@ -5,6 +5,7 @@ interface TGame {
 
 interface TNewFlag {
   name: string;
+  desc?: string;
   value: string;
   game_id: number;
 }

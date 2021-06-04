@@ -35,7 +35,8 @@ model game {
 
 model flags {
   id        Int       @default(autoincrement()) @id
-  name      String?
+  name      String
+  desc      String?
   value     String
 
   game      game      @relation(fields: [game_id], references: [id])

@@ -35,7 +35,10 @@ export const FlagList : React.FC<Props> = (props) => {
 
       <ul>
         {flags.map((f) => (
-          <li key={f.id}><a onClick={() => props.on_flag_change(f)}>{f.name}</a></li>
+          <li key={f.id}>
+            <div><a onClick={() => props.on_flag_change(f)}>{f.name}</a></div>
+            <div className="flag-desc">{f.desc}</div>
+          </li>
         ))}
       </ul>
 
