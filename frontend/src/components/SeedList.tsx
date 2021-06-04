@@ -31,13 +31,25 @@ export const SeedList : React.FC<Props> = ({ flag }) => {
     set_show_modal(false)
   }
 
+  const update_seed = (orig_seed: TSeed, callback: (to_update: TSeed) => void ) => {
+    set_seeds((all) => {
+      let seed = all.find((s) => s.id === orig_seed.id)
+
+      if ( seed ) {
+        callback(seed)
+      }
+
+      return all
+    })
+  }
+
   return (
     <div className="seeds">
       <h3>{flag.name}</h3>
       Flags <input type="text" size={40} readOnly={true} value={flag.value} />
 
       <ul>
-        {seeds.map((s) => ( <li><Seed seed={s} playthroughs={s.playthroughs}/></li> ))}
+        {seeds.map((s) => ( <li><Seed seed={s} update_seed={update_seed}/></li> ))}
       </ul>
 
       {user && <>

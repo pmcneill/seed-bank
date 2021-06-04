@@ -12,7 +12,7 @@ import './Seed.css'
 
 interface SeedProps {
   seed : TSeed;
-  playthroughs: TPlaythrough[];
+  update_seed : (seed: TSeed, callback: (to_update: TSeed) => void) => void;
 }
 
 interface ToggleProps {
@@ -38,30 +38,31 @@ const TogglePlaythrough : React.FC<ToggleProps> = function({ value, onChange}) {
   }
 }
 
-export const Seed : React.FC<SeedProps> = function({ seed, playthroughs }) {
+export const Seed : React.FC<SeedProps> = function({ seed, update_seed }) {
   let fun = 0, hard = 0, time = 0
 
   let [ show_modal, set_show_modal ] = useState<boolean>(false)
   let [ show_pts, set_show_pts ] = useState<boolean>(false)
-  let [ pts, set_pts ] = useState<Array<TPlaythrough>>(playthroughs)
 
   const { user } = useUser()
 
-  if ( pts?.length ) {
-    for ( let pt of pts ) {
+  if ( seed.playthroughs.length ) {
+    for ( let pt of seed.playthroughs ) {
       fun += pt.rating_fun
       hard += pt.rating_hard
       time += pt.time_ms
     }
 
-    fun /= pts.length
-    hard /= pts.length
-    time = Math.floor(time / pts.length)
+    fun /= seed.playthroughs.length
+    hard /= seed.playthroughs.length
+    time = Math.floor(time / seed.playthroughs.length)
   }
 
   const add_playthrough = (pt: TPlaythrough, seed: TSeed) => {
+    update_seed(seed, (s) => {
+      s.playthroughs.push(pt)
+    })
     seed.playthroughs.push(pt)
-    set_pts((pts) => pts.concat(pt))
     set_show_modal(false)
   }
 
@@ -75,7 +76,7 @@ export const Seed : React.FC<SeedProps> = function({ seed, playthroughs }) {
 
       {!show_pts && <div className="playthrough">
         <div className="counts spoiler">
-          Plays: {pts?.length || 0}
+          Plays: {seed.playthroughs?.length || 0}
           {user && !user.hide_ratings && <>&nbsp; Avg. Time: {from_ms(time)}</>}
         </div>
         {user && !user.hide_ratings && <div className="ratings spoiler">
@@ -85,7 +86,7 @@ export const Seed : React.FC<SeedProps> = function({ seed, playthroughs }) {
         </div>}
       </div>}
 
-      {show_pts && pts.map((pt) => <Playthrough playthrough={pt}/>)}
+      {show_pts && seed.playthroughs.map((pt) => <Playthrough playthrough={pt}/>)}
 
       <div className="add_pt">
         <TogglePlaythrough value={show_pts} onChange={set_show_pts} />
