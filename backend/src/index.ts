@@ -63,7 +63,7 @@ passport.use(new OAuth2Strategy({
   tokenURL: 'https://id.twitch.tv/oauth2/token',
   clientID: process.env.client_id!,
   clientSecret: process.env.secret!,
-  callbackURL: "http://localhost:8888/login/authorize",
+  callbackURL: "https://seedbank.patrickmcneill.com/login/authorize",
 }, (accessToken: string, refreshToken: string, profile: any, done: done_callback) => {
 
   fetch("https://api.twitch.tv/helix/users", {
@@ -236,4 +236,5 @@ app.post('/api/seeds/:seed_id/playthrough',
   }
 )
 
-app.listen(8888)
+app.listen(8998)
+console.log("Listening...")

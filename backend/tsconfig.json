@@ -3,7 +3,7 @@
     "outDir": "./built",
     "allowJs": true,
     "sourceMap": true,
-    "target": "es2017",
+    "target": "es2020",
     "noImplicitAny": true,
     "strictNullChecks": true,
     "module": "commonjs",
